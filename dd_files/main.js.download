@@ -1,0 +1,1887 @@
+/**
+* jQuery Timer
+*/
+jQuery.timer = function(time,func,callback){ var a = {timer:setTimeout(func,time),callback:null}; if(typeof(callback) == 'function'){a.callback = callback;} return a; };
+jQuery.clearTimer = function(a){ clearTimeout(a.timer); if(typeof(a.callback) == 'function'){a.callback();}; return this; };
+
+/*
+jQuery Waypoints - v2.0.2
+Copyright (c) 2011-2013 Caleb Troughton
+Dual licensed under the MIT license and GPL license.
+https://github.com/imakewebthings/jquery-waypoints/blob/master/licenses.txt
+*/
+(function(){var t=[].indexOf||function(t){for(var e=0,n=this.length;e<n;e++){if(e in this&&this[e]===t)return e}return-1},e=[].slice;(function(t,e){if(typeof define==="function"&&define.amd){return define("waypoints",["jquery"],function(n){return e(n,t)})}else{return e(t.jQuery,t)}})(this,function(n,r){var i,o,l,s,f,u,a,c,h,d,p,y,v,w,g,m;i=n(r);c=t.call(r,"ontouchstart")>=0;s={horizontal:{},vertical:{}};f=1;a={};u="waypoints-context-id";p="resize.waypoints";y="scroll.waypoints";v=1;w="waypoints-waypoint-ids";g="waypoint";m="waypoints";o=function(){function t(t){var e=this;this.$element=t;this.element=t[0];this.didResize=false;this.didScroll=false;this.id="context"+f++;this.oldScroll={x:t.scrollLeft(),y:t.scrollTop()};this.waypoints={horizontal:{},vertical:{}};t.data(u,this.id);a[this.id]=this;t.bind(y,function(){var t;if(!(e.didScroll||c)){e.didScroll=true;t=function(){e.doScroll();return e.didScroll=false};return r.setTimeout(t,n[m].settings.scrollThrottle)}});t.bind(p,function(){var t;if(!e.didResize){e.didResize=true;t=function(){n[m]("refresh");return e.didResize=false};return r.setTimeout(t,n[m].settings.resizeThrottle)}})}t.prototype.doScroll=function(){var t,e=this;t={horizontal:{newScroll:this.$element.scrollLeft(),oldScroll:this.oldScroll.x,forward:"right",backward:"left"},vertical:{newScroll:this.$element.scrollTop(),oldScroll:this.oldScroll.y,forward:"down",backward:"up"}};if(c&&(!t.vertical.oldScroll||!t.vertical.newScroll)){n[m]("refresh")}n.each(t,function(t,r){var i,o,l;l=[];o=r.newScroll>r.oldScroll;i=o?r.forward:r.backward;n.each(e.waypoints[t],function(t,e){var n,i;if(r.oldScroll<(n=e.offset)&&n<=r.newScroll){return l.push(e)}else if(r.newScroll<(i=e.offset)&&i<=r.oldScroll){return l.push(e)}});l.sort(function(t,e){return t.offset-e.offset});if(!o){l.reverse()}return n.each(l,function(t,e){if(e.options.continuous||t===l.length-1){return e.trigger([i])}})});return this.oldScroll={x:t.horizontal.newScroll,y:t.vertical.newScroll}};t.prototype.refresh=function(){var t,e,r,i=this;r=n.isWindow(this.element);e=this.$element.offset();this.doScroll();t={horizontal:{contextOffset:r?0:e.left,contextScroll:r?0:this.oldScroll.x,contextDimension:this.$element.width(),oldScroll:this.oldScroll.x,forward:"right",backward:"left",offsetProp:"left"},vertical:{contextOffset:r?0:e.top,contextScroll:r?0:this.oldScroll.y,contextDimension:r?n[m]("viewportHeight"):this.$element.height(),oldScroll:this.oldScroll.y,forward:"down",backward:"up",offsetProp:"top"}};return n.each(t,function(t,e){return n.each(i.waypoints[t],function(t,r){var i,o,l,s,f;i=r.options.offset;l=r.offset;o=n.isWindow(r.element)?0:r.$element.offset()[e.offsetProp];if(n.isFunction(i)){i=i.apply(r.element)}else if(typeof i==="string"){i=parseFloat(i);if(r.options.offset.indexOf("%")>-1){i=Math.ceil(e.contextDimension*i/100)}}r.offset=o-e.contextOffset+e.contextScroll-i;if(r.options.onlyOnScroll&&l!=null||!r.enabled){return}if(l!==null&&l<(s=e.oldScroll)&&s<=r.offset){return r.trigger([e.backward])}else if(l!==null&&l>(f=e.oldScroll)&&f>=r.offset){return r.trigger([e.forward])}else if(l===null&&e.oldScroll>=r.offset){return r.trigger([e.forward])}})})};t.prototype.checkEmpty=function(){if(n.isEmptyObject(this.waypoints.horizontal)&&n.isEmptyObject(this.waypoints.vertical)){this.$element.unbind([p,y].join(" "));return delete a[this.id]}};return t}();l=function(){function t(t,e,r){var i,o;r=n.extend({},n.fn[g].defaults,r);if(r.offset==="bottom-in-view"){r.offset=function(){var t;t=n[m]("viewportHeight");if(!n.isWindow(e.element)){t=e.$element.height()}return t-n(this).outerHeight()}}this.$element=t;this.element=t[0];this.axis=r.horizontal?"horizontal":"vertical";this.callback=r.handler;this.context=e;this.enabled=r.enabled;this.id="waypoints"+v++;this.offset=null;this.options=r;e.waypoints[this.axis][this.id]=this;s[this.axis][this.id]=this;i=(o=t.data(w))!=null?o:[];i.push(this.id);t.data(w,i)}t.prototype.trigger=function(t){if(!this.enabled){return}if(this.callback!=null){this.callback.apply(this.element,t)}if(this.options.triggerOnce){return this.destroy()}};t.prototype.disable=function(){return this.enabled=false};t.prototype.enable=function(){this.context.refresh();return this.enabled=true};t.prototype.destroy=function(){delete s[this.axis][this.id];delete this.context.waypoints[this.axis][this.id];return this.context.checkEmpty()};t.getWaypointsByElement=function(t){var e,r;r=n(t).data(w);if(!r){return[]}e=n.extend({},s.horizontal,s.vertical);return n.map(r,function(t){return e[t]})};return t}();d={init:function(t,e){var r;if(e==null){e={}}if((r=e.handler)==null){e.handler=t}this.each(function(){var t,r,i,s;t=n(this);i=(s=e.context)!=null?s:n.fn[g].defaults.context;if(!n.isWindow(i)){i=t.closest(i)}i=n(i);r=a[i.data(u)];if(!r){r=new o(i)}return new l(t,r,e)});n[m]("refresh");return this},disable:function(){return d._invoke(this,"disable")},enable:function(){return d._invoke(this,"enable")},destroy:function(){return d._invoke(this,"destroy")},prev:function(t,e){return d._traverse.call(this,t,e,function(t,e,n){if(e>0){return t.push(n[e-1])}})},next:function(t,e){return d._traverse.call(this,t,e,function(t,e,n){if(e<n.length-1){return t.push(n[e+1])}})},_traverse:function(t,e,i){var o,l;if(t==null){t="vertical"}if(e==null){e=r}l=h.aggregate(e);o=[];this.each(function(){var e;e=n.inArray(this,l[t]);return i(o,e,l[t])});return this.pushStack(o)},_invoke:function(t,e){t.each(function(){var t;t=l.getWaypointsByElement(this);return n.each(t,function(t,n){n[e]();return true})});return this}};n.fn[g]=function(){var t,r;r=arguments[0],t=2<=arguments.length?e.call(arguments,1):[];if(d[r]){return d[r].apply(this,t)}else if(n.isFunction(r)){return d.init.apply(this,arguments)}else if(n.isPlainObject(r)){return d.init.apply(this,[null,r])}else if(!r){return n.error("jQuery Waypoints needs a callback function or handler option.")}else{return n.error("The "+r+" method does not exist in jQuery Waypoints.")}};n.fn[g].defaults={context:r,continuous:true,enabled:true,horizontal:false,offset:0,triggerOnce:false};h={refresh:function(){return n.each(a,function(t,e){return e.refresh()})},viewportHeight:function(){var t;return(t=r.innerHeight)!=null?t:i.height()},aggregate:function(t){var e,r,i;e=s;if(t){e=(i=a[n(t).data(u)])!=null?i.waypoints:void 0}if(!e){return[]}r={horizontal:[],vertical:[]};n.each(r,function(t,i){n.each(e[t],function(t,e){return i.push(e)});i.sort(function(t,e){return t.offset-e.offset});r[t]=n.map(i,function(t){return t.element});return r[t]=n.unique(r[t])});return r},above:function(t){if(t==null){t=r}return h._filter(t,"vertical",function(t,e){return e.offset<=t.oldScroll.y})},below:function(t){if(t==null){t=r}return h._filter(t,"vertical",function(t,e){return e.offset>t.oldScroll.y})},left:function(t){if(t==null){t=r}return h._filter(t,"horizontal",function(t,e){return e.offset<=t.oldScroll.x})},right:function(t){if(t==null){t=r}return h._filter(t,"horizontal",function(t,e){return e.offset>t.oldScroll.x})},enable:function(){return h._invoke("enable")},disable:function(){return h._invoke("disable")},destroy:function(){return h._invoke("destroy")},extendFn:function(t,e){return d[t]=e},_invoke:function(t){var e;e=n.extend({},s.vertical,s.horizontal);return n.each(e,function(e,n){n[t]();return true})},_filter:function(t,e,r){var i,o;i=a[n(t).data(u)];if(!i){return[]}o=[];n.each(i.waypoints[e],function(t,e){if(r(i,e)){return o.push(e)}});o.sort(function(t,e){return t.offset-e.offset});return n.map(o,function(t){return t.element})}};n[m]=function(){var t,n;n=arguments[0],t=2<=arguments.length?e.call(arguments,1):[];if(h[n]){return h[n].apply(null,t)}else{return h.aggregate.call(null,n)}};n[m].settings={resizeThrottle:100,scrollThrottle:30};return i.load(function(){return n[m]("refresh")})})}).call(this);
+
+/* jQuery Preload images */
+(function($){
+	var imgList = [];
+	$.extend({
+		preload: function(imgArr, option) {
+			var setting = $.extend({
+				init: function(loaded, total) {},
+				loaded: function(img, loaded, total) {},
+				loaded_all: function(loaded, total) {}
+			}, option);
+			var total = imgArr.length;
+			var loaded = 0;
+
+			setting.init(0, total);
+			for(var i in imgArr) {
+				imgList.push($("<img />")
+					.attr("src", imgArr[i])
+					.load(function() {
+						loaded++;
+						setting.loaded(this, loaded, total);
+						if(loaded == total) {
+							setting.loaded_all(loaded, total);
+						}
+					})
+				);
+			}
+
+		}
+	});
+
+
+})(jQuery);
+
+
+/*! Idle Timer - v0.9.2 */
+(function(e){e.idleTimer=function(t,i,d){d=e.extend({startImmediately:!0,idle:!1,enabled:!0,timeout:3e4,events:"mousemove keydown DOMMouseScroll mousewheel mousedown touchstart touchmove"},d),i=i||document;var l=e(i),a=l.data("idleTimerObj")||{},o=function(t){"number"==typeof t&&(t=void 0);var l=e.data(t||i,"idleTimerObj");l.idle=!l.idle;var a=+new Date-l.olddate;if(l.olddate=+new Date,l.idle&&d.timeout>a)return l.idle=!1,clearTimeout(e.idleTimer.tId),d.enabled&&(e.idleTimer.tId=setTimeout(o,d.timeout)),void 0;var m=e.Event(e.data(i,"idleTimer",l.idle?"idle":"active")+".idleTimer");e(i).trigger(m)},m=function(e){var t=e.data("idleTimerObj")||{};t.enabled=!1,clearTimeout(t.tId),e.off(".idleTimer")};if(a.olddate=a.olddate||+new Date,"number"==typeof t)d.timeout=t;else{if("destroy"===t)return m(l),this;if("getElapsedTime"===t)return+new Date-a.olddate}l.on(e.trim((d.events+" ").split(" ").join(".idleTimer ")),function(){var t=e.data(this,"idleTimerObj");clearTimeout(t.tId),t.enabled&&(t.idle&&o(this),t.tId=setTimeout(o,t.timeout))}),a.idle=d.idle,a.enabled=d.enabled,a.timeout=d.timeout,d.startImmediately&&(a.tId=setTimeout(o,a.timeout)),l.data("idleTimer","active"),l.data("idleTimerObj",a)},e.fn.idleTimer=function(t,i){return i||(i={}),this[0]?e.idleTimer(t,this[0],i):this}})(jQuery);
+
+/** Popup Window **/
+jQuery.fn.popupwindow=function(p){var profiles=p||{};return this.each(function(index){var settings,parameters,mysettings,b,a,winObj;mysettings=(jQuery(this).attr("rel")||"").split(",");settings={height:600,width:550,toolbar:0,scrollbars:0,status:0,resizable:0,left:0,top:0,center:1,createnew:1,location:0,menubar:0,onUnload:null};if(mysettings.length==1&&mysettings[0].split(":").length==1){a=mysettings[0];if(typeof profiles[a]!="undefined")settings=jQuery.extend(settings,profiles[a])}else for(var i=
+0;i<mysettings.length;i++){b=mysettings[i].split(":");if(typeof settings[b[0]]!="undefined"&&b.length==2)settings[b[0]]=b[1]}if(settings.center==1){settings.top=(screen.height-(settings.height+110))/2;settings.left=(screen.width-settings.width)/2}parameters="location="+settings.location+",menubar="+settings.menubar+",height="+settings.height+",width="+settings.width+",toolbar="+settings.toolbar+",scrollbars="+settings.scrollbars+",status="+settings.status+",resizable="+settings.resizable+",left="+
+settings.left+",screenX="+settings.left+",top="+settings.top+",screenY="+settings.top;jQuery(this).bind("click",function(){var name=settings.createnew?"PopUpWindow"+index:"PopUpWindow";winObj=window.open(this.href,name,parameters);if(settings.onUnload)unloadInterval=setInterval(function(){if(!winObj||winObj.closed){clearInterval(unloadInterval);settings.onUnload.call($(this))}},500);winObj.focus();return false})})};
+
+/*!
+ PowerTip - v1.2.0 - 2013-04-03
+ http://stevenbenner.github.com/jquery-powertip/
+ Copyright (c) 2013 Steven Benner (http://stevenbenner.com/).
+ Released under MIT license.
+ https://raw.github.com/stevenbenner/jquery-powertip/master/LICENSE.txt
+*/
+(function(e){"function"==typeof define&&define.amd?define(["jquery"],e):e(jQuery)})(function(e){function t(){var t=this;t.top="auto",t.left="auto",t.right="auto",t.bottom="auto",t.set=function(o,n){e.isNumeric(n)&&(t[o]=Math.round(n))}}function o(e,t,o){function n(n,i){r(),e.data(v)||(n?(i&&e.data(m,!0),o.showTip(e)):(P.tipOpenImminent=!0,l=setTimeout(function(){l=null,s()},t.intentPollInterval)))}function i(n){r(),P.tipOpenImminent=!1,e.data(v)&&(e.data(m,!1),n?o.hideTip(e):(P.delayInProgress=!0,l=setTimeout(function(){l=null,o.hideTip(e),P.delayInProgress=!1},t.closeDelay)))}function s(){var i=Math.abs(P.previousX-P.currentX),s=Math.abs(P.previousY-P.currentY),r=i+s;t.intentSensitivity>r?o.showTip(e):(P.previousX=P.currentX,P.previousY=P.currentY,n())}function r(){l=clearTimeout(l),P.delayInProgress=!1}function a(){o.resetPosition(e)}var l=null;this.show=n,this.hide=i,this.cancel=r,this.resetPosition=a}function n(){function e(e,i,r,a,l){var p,c=i.split("-")[0],u=new t;switch(p=s(e)?n(e,c):o(e,c),i){case"n":u.set("left",p.left-r/2),u.set("bottom",P.windowHeight-p.top+l);break;case"e":u.set("left",p.left+l),u.set("top",p.top-a/2);break;case"s":u.set("left",p.left-r/2),u.set("top",p.top+l);break;case"w":u.set("top",p.top-a/2),u.set("right",P.windowWidth-p.left+l);break;case"nw":u.set("bottom",P.windowHeight-p.top+l),u.set("right",P.windowWidth-p.left-20);break;case"nw-alt":u.set("left",p.left),u.set("bottom",P.windowHeight-p.top+l);break;case"ne":u.set("left",p.left-20),u.set("bottom",P.windowHeight-p.top+l);break;case"ne-alt":u.set("bottom",P.windowHeight-p.top+l),u.set("right",P.windowWidth-p.left);break;case"sw":u.set("top",p.top+l),u.set("right",P.windowWidth-p.left-20);break;case"sw-alt":u.set("left",p.left),u.set("top",p.top+l);break;case"se":u.set("left",p.left-20),u.set("top",p.top+l);break;case"se-alt":u.set("top",p.top+l),u.set("right",P.windowWidth-p.left)}return u}function o(e,t){var o,n,i=e.offset(),s=e.outerWidth(),r=e.outerHeight();switch(t){case"n":o=i.left+s/2,n=i.top;break;case"e":o=i.left+s,n=i.top+r/2;break;case"s":o=i.left+s/2,n=i.top+r;break;case"w":o=i.left,n=i.top+r/2;break;case"nw":o=i.left,n=i.top;break;case"ne":o=i.left+s,n=i.top;break;case"sw":o=i.left,n=i.top+r;break;case"se":o=i.left+s,n=i.top+r}return{top:n,left:o}}function n(e,t){function o(){d.push(p.matrixTransform(u))}var n,i,s,r,a=e.closest("svg")[0],l=e[0],p=a.createSVGPoint(),c=l.getBBox(),u=l.getScreenCTM(),f=c.width/2,w=c.height/2,d=[],h=["nw","n","ne","e","se","s","sw","w"];if(p.x=c.x,p.y=c.y,o(),p.x+=f,o(),p.x+=f,o(),p.y+=w,o(),p.y+=w,o(),p.x-=f,o(),p.x-=f,o(),p.y-=w,o(),d[0].y!==d[1].y||d[0].x!==d[7].x)for(i=Math.atan2(u.b,u.a)*O,s=Math.ceil((i%360-22.5)/45),1>s&&(s+=8);s--;)h.push(h.shift());for(r=0;d.length>r;r++)if(h[r]===t){n=d[r];break}return{top:n.y+P.scrollTop,left:n.x+P.scrollLeft}}this.compute=e}function i(o){function i(e){e.data(v,!0),O.queue(function(t){s(e),t()})}function s(e){var t;if(e.data(v)){if(P.isTipOpen)return P.isClosing||r(P.activeHover),O.delay(100).queue(function(t){s(e),t()}),void 0;e.trigger("powerTipPreRender"),t=p(e),t&&(O.empty().append(t),e.trigger("powerTipRender"),P.activeHover=e,P.isTipOpen=!0,O.data(g,o.mouseOnToPopup),o.followMouse?a():(b(e),P.isFixedTipOpen=!0),O.fadeIn(o.fadeInTime,function(){P.desyncTimeout||(P.desyncTimeout=setInterval(H,500)),e.trigger("powerTipOpen")}))}}function r(e){P.isClosing=!0,P.activeHover=null,P.isTipOpen=!1,P.desyncTimeout=clearInterval(P.desyncTimeout),e.data(v,!1),e.data(m,!1),O.fadeOut(o.fadeOutTime,function(){var n=new t;P.isClosing=!1,P.isFixedTipOpen=!1,O.removeClass(),n.set("top",P.currentY+o.offset),n.set("left",P.currentX+o.offset),O.css(n),e.trigger("powerTipClose")})}function a(){if(!P.isFixedTipOpen&&(P.isTipOpen||P.tipOpenImminent&&O.data(T))){var e,n,i=O.outerWidth(),s=O.outerHeight(),r=new t;r.set("top",P.currentY+o.offset),r.set("left",P.currentX+o.offset),e=c(r,i,s),e!==I.none&&(n=u(e),1===n?e===I.right?r.set("left",P.windowWidth-i):e===I.bottom&&r.set("top",P.scrollTop+P.windowHeight-s):(r.set("left",P.currentX-i-o.offset),r.set("top",P.currentY-s-o.offset))),O.css(r)}}function b(t){var n,i;o.smartPlacement?(n=e.fn.powerTip.smartPlacementLists[o.placement],e.each(n,function(e,o){var n=c(y(t,o),O.outerWidth(),O.outerHeight());return i=o,n===I.none?!1:void 0})):(y(t,o.placement),i=o.placement),O.addClass(i)}function y(e,n){var i,s,r=0,a=new t;a.set("top",0),a.set("left",0),O.css(a);do i=O.outerWidth(),s=O.outerHeight(),a=k.compute(e,n,i,s,o.offset),O.css(a);while(5>=++r&&(i!==O.outerWidth()||s!==O.outerHeight()));return a}function H(){var e=!1;!P.isTipOpen||P.isClosing||P.delayInProgress||(P.activeHover.data(v)===!1||P.activeHover.is(":disabled")?e=!0:l(P.activeHover)||P.activeHover.is(":focus")||P.activeHover.data(m)||(O.data(g)?l(O)||(e=!0):e=!0),e&&r(P.activeHover))}var k=new n,O=e("#"+o.popupId);0===O.length&&(O=e("<div/>",{id:o.popupId}),0===d.length&&(d=e("body")),d.append(O)),o.followMouse&&(O.data(T)||(f.on("mousemove",a),w.on("scroll",a),O.data(T,!0))),o.mouseOnToPopup&&O.on({mouseenter:function(){O.data(g)&&P.activeHover&&P.activeHover.data(h).cancel()},mouseleave:function(){P.activeHover&&P.activeHover.data(h).hide()}}),this.showTip=i,this.hideTip=r,this.resetPosition=b}function s(e){return window.SVGElement&&e[0]instanceof SVGElement}function r(){P.mouseTrackingActive||(P.mouseTrackingActive=!0,e(function(){P.scrollLeft=w.scrollLeft(),P.scrollTop=w.scrollTop(),P.windowWidth=w.width(),P.windowHeight=w.height()}),f.on("mousemove",a),w.on({resize:function(){P.windowWidth=w.width(),P.windowHeight=w.height()},scroll:function(){var e=w.scrollLeft(),t=w.scrollTop();e!==P.scrollLeft&&(P.currentX+=e-P.scrollLeft,P.scrollLeft=e),t!==P.scrollTop&&(P.currentY+=t-P.scrollTop,P.scrollTop=t)}}))}function a(e){P.currentX=e.pageX,P.currentY=e.pageY}function l(e){var t=e.offset(),o=e[0].getBoundingClientRect(),n=o.right-o.left,i=o.bottom-o.top;return P.currentX>=t.left&&P.currentX<=t.left+n&&P.currentY>=t.top&&P.currentY<=t.top+i}function p(t){var o,n,i=t.data(y),s=t.data(H),r=t.data(k);return i?(e.isFunction(i)&&(i=i.call(t[0])),n=i):s?(e.isFunction(s)&&(s=s.call(t[0])),s.length>0&&(n=s.clone(!0,!0))):r&&(o=e("#"+r),o.length>0&&(n=o.html())),n}function c(e,t,o){var n=P.scrollTop,i=P.scrollLeft,s=n+P.windowHeight,r=i+P.windowWidth,a=I.none;return(n>e.top||n>Math.abs(e.bottom-P.windowHeight)-o)&&(a|=I.top),(e.top+o>s||Math.abs(e.bottom-P.windowHeight)>s)&&(a|=I.bottom),(i>e.left||e.right+t>r)&&(a|=I.left),(e.left+t>r||i>e.right)&&(a|=I.right),a}function u(e){for(var t=0;e;)e&=e-1,t++;return t}var f=e(document),w=e(window),d=e("body"),h="displayController",v="hasActiveHover",m="forcedOpen",T="hasMouseMove",g="mouseOnToPopup",b="originalTitle",y="powertip",H="powertipjq",k="powertiptarget",O=180/Math.PI,P={isTipOpen:!1,isFixedTipOpen:!1,isClosing:!1,tipOpenImminent:!1,activeHover:null,currentX:0,currentY:0,previousX:0,previousY:0,desyncTimeout:null,mouseTrackingActive:!1,delayInProgress:!1,windowWidth:0,windowHeight:0,scrollTop:0,scrollLeft:0},I={none:0,top:1,bottom:2,left:4,right:8};e.fn.powerTip=function(t,n){if(!this.length)return this;if("string"===e.type(t)&&e.powerTip[t])return e.powerTip[t].call(this,this,n);var s=e.extend({},e.fn.powerTip.defaults,t),a=new i(s);return r(),this.each(function(){var t,n=e(this),i=n.data(y),r=n.data(H),l=n.data(k);n.data(h)&&e.powerTip.destroy(n),t=n.attr("title"),i||l||r||!t||(n.data(y,t),n.data(b,t),n.removeAttr("title")),n.data(h,new o(n,s,a))}),s.manual||this.on({"mouseenter.powertip":function(t){e.powerTip.show(this,t)},"mouseleave.powertip":function(){e.powerTip.hide(this)},"focus.powertip":function(){e.powerTip.show(this)},"blur.powertip":function(){e.powerTip.hide(this,!0)},"keydown.powertip":function(t){27===t.keyCode&&e.powerTip.hide(this,!0)}}),this},e.fn.powerTip.defaults={fadeInTime:200,fadeOutTime:100,followMouse:!1,popupId:"powerTip",intentSensitivity:7,intentPollInterval:100,closeDelay:100,placement:"n",smartPlacement:!1,offset:10,mouseOnToPopup:!1,manual:!1},e.fn.powerTip.smartPlacementLists={n:["n","ne","nw","s"],e:["e","ne","se","w","nw","sw","n","s","e"],s:["s","se","sw","n"],w:["w","nw","sw","e","ne","se","n","s","w"],nw:["nw","w","sw","n","s","se","nw"],ne:["ne","e","se","n","s","sw","ne"],sw:["sw","w","nw","s","n","ne","sw"],se:["se","e","ne","s","n","nw","se"],"nw-alt":["nw-alt","n","ne-alt","sw-alt","s","se-alt","w","e"],"ne-alt":["ne-alt","n","nw-alt","se-alt","s","sw-alt","e","w"],"sw-alt":["sw-alt","s","se-alt","nw-alt","n","ne-alt","w","e"],"se-alt":["se-alt","s","sw-alt","ne-alt","n","nw-alt","e","w"]},e.powerTip={show:function(t,o){return o?(a(o),P.previousX=o.pageX,P.previousY=o.pageY,e(t).data(h).show()):e(t).first().data(h).show(!0,!0),t},reposition:function(t){return e(t).first().data(h).resetPosition(),t},hide:function(t,o){return t?e(t).first().data(h).hide(o):P.activeHover&&P.activeHover.data(h).hide(!0),t},destroy:function(t){return e(t).off(".powertip").each(function(){var t=e(this),o=[b,h,v,m];t.data(b)&&(t.attr("title",t.data(b)),o.push(y)),t.removeData(o)}),t}},e.powerTip.showTip=e.powerTip.show,e.powerTip.closeTip=e.powerTip.hide});
+
+
+var touch, minWidth = 320;
+
+function carousels(){
+
+    var delay,
+    carouselHolder = $("#featureCarousel"),
+    captionLink = $('#carouselLink'),
+    content = [],
+    dur = 800,
+    pauseTime = 6000,
+    slider = setInterval(nextSlide, pauseTime);
+
+    /************
+    * Slideshow *
+    ************/
+    $(carouselHolder).hover(function(){
+        stopSlideshow();
+        }, function(){
+            stopSlideshow();
+            startSlideshow();
+        }
+    );
+    function stopSlideshow(){
+        window.clearInterval(slider);
+    }
+    function startSlideshow(){
+        slider = setInterval(nextSlide, pauseTime);
+    }
+
+    /*****************
+    * Slideshow Idle *
+    *****************/
+    $( document ).idleTimer(30000);
+    $( document ).on("idle.idleTimer", function(){
+        stopSlideshow(); //stop the slideshow if the user becomes inactive
+    });
+
+    $( document ).on( "active.idleTimer", function(){
+        startSlideshow(); //restart the slideshow if the user becomes active again
+    });
+
+    function nextSlide(){
+        $('#prevSlide').click();
+    }
+
+    function fillBlanks($wrapper){
+        var slides = $wrapper.find('.slide').length;
+        $wrapper.find('.blank_end').html($wrapper.find('.slide').eq(0).html());
+        $wrapper.find('.blank_start').html($wrapper.find('.slide').eq(slides-1).html());
+    };
+
+    function updateCaption($wrapper, middle){
+
+        var caption_title = $wrapper.find('li').eq(middle-1).attr('data-title');
+        var caption_price = $wrapper.find('li').eq(middle-1).attr('data-price');
+        var caption_country = $wrapper.find('li').eq(middle-1).attr('data-country');
+        var caption_address = $wrapper.find('li').eq(middle-1).attr('data-address');
+        var newCaption = '<strong>'+caption_title+'</strong><br />'+caption_price+'<br /><i class="flag-'+caption_country+'-m flag-rm"></i>'+caption_address+'<div class="captionInner"><i class="icon-r-arrow"></i></div>';
+
+        return newCaption;
+
+    }
+
+    function updateURLlink($wrapper, middle){
+        var url = $wrapper.find('li').eq(middle-1).attr('data-property-url');
+        $(captionLink).attr("href", url);
+
+        //show the link surrounding the caption
+        captionLink.show();
+    }
+
+    function preloadSlideShowImages(){
+        $('li.slide').each(function(e){
+            var slide = $(this);
+            var image = slide.attr('data-image');
+            var alt = slide.attr('data-title')+', '+slide.attr('data-address');
+
+            $.preload([image], {
+                loaded: function(img, loaded, total){
+
+                    var imageH = slide.find('.slideInner');
+                    imageH.html('<img src="'+image+'" alt="'+alt+'" />');
+                    imageH.fadeIn();
+
+                }
+            });
+        });
+    }
+
+    function slide($wrapper, dir, middle) {
+        //fade out the caption
+        var $caption = $wrapper.siblings('.overlays').find('.caption');
+        $caption.fadeOut(200, function(){
+            //hide the link surrounding the caption
+            captionLink.hide();
+        });
+
+        fillBlanks($wrapper);
+        if(dir == 'back')$wrapper.addClass('back')
+        else $wrapper.addClass('forward');
+        delay = setTimeout(function(){
+            $wrapper.find('.slide').each(function(){
+                content.push($(this));
+            });
+            if($wrapper.hasClass('back')){
+                    var first = content.shift();
+                    content.push(first);
+            } else {
+                    var first = content.pop();
+                    content.unshift(first);
+            }
+            $wrapper.find('.slide').wrapAll('<div class="temp"/>');
+            $.each(content, function(){
+                    $wrapper.find('.temp').append($(this));
+            });
+            $wrapper.find('.slide').unwrap();
+            $wrapper.removeClass('back forward');
+            fillBlanks($wrapper);
+
+            //update the url link
+            updateURLlink($wrapper, middle);
+
+            //update the caption
+            var newCaption = updateCaption($wrapper, middle);
+            $caption.html(newCaption).fadeIn(300);
+
+            clearAndUpdateCarouselContent();
+
+        }, dur);
+    };
+
+    function clearAndUpdateCarouselContent(){
+        content = [];
+
+        var $wrapper = $(this).find('.scroll_wrapper');
+        $wrapper.find('.slide').each(function(){
+            content.push($(this));
+        });
+    }
+
+
+    $('.carousel').each(function(){
+        var $wrapper = $(this).find('.scroll_wrapper'),
+        slides = $wrapper.find('li').length,
+        first = $wrapper.find('li').eq(0).html();
+        if (slides < 2)return false;
+        if (slides == 2){
+
+            $wrapper.find('.slide').each(function(){
+                $(this).clone().appendTo($wrapper);
+            });
+
+            $wrapper.find('.slide').each(function(){
+                content.push($(this));
+            });
+
+        };
+
+        if (slides %2 == 0) $wrapper.append('<li class="blank_end"></li>');
+        if (slides == 3) $wrapper.append('<li class="blank_end"></li>').prepend('<li class="blank_start"></li>');
+        fillBlanks($wrapper);
+
+        var middle = ($wrapper.find('li').length/2).toFixed();
+
+        //update the url link
+        updateURLlink($wrapper, middle);
+
+        //update the caption
+        var newCaption = updateCaption($wrapper, middle);
+        $wrapper.siblings('.overlays').find('.caption').html(newCaption);
+
+        var clickEv = touch ? 'touchclick' : 'click';
+
+        $(this).find('.nav').bind(clickEv,function(){
+            clearTimeout(delay);
+            if($(this).hasClass('prev')){
+                slide($wrapper, 'back', middle);
+            } else {
+                slide($wrapper, 'forward', middle);
+            };
+        });
+    });
+
+    //preload the images
+    preloadSlideShowImages();
+
+};
+
+
+
+function stickyElements(){
+
+    var header = $('#header'); //define the header
+    var mainContent = $('#mainContent') //define the main Content
+    var searchBar = $("#searchBar"); //define the searchBar
+    var sB = searchBar.offset().top; //get the height of the searchBar from the top
+    var h = 47; //the height of the header
+sB = 503;
+    var move = function(){
+
+        var sW = $(window).width();
+
+        //if the screen width is smaller than the minimum site width
+        if(sW < minWidth){
+            searchBar.removeClass('searchBarSticky');
+            header.removeClass('headerSticky');
+            mainContent.removeClass('searchBarSpacer');
+        }else{
+
+            header.addClass('headerSticky');
+            mainContent.addClass('searchBarSpacer');
+
+            var st = $(window).scrollTop(); //get the current scroll position
+
+			//console.log("st = "+st+" | h = "+h+" | sB = "+sB);
+
+            if(st+h > sB){
+                searchBar.addClass('searchBarSticky');
+                mainContent.addClass('searchBarSpacer');
+            } else {
+                if(st <= sB) {
+                    searchBar.removeClass('searchBarSticky');
+                    mainContent.removeClass('searchBarSpacer');
+                }
+            }
+        }
+
+    };
+
+    //Run the function straight away
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+
+        mainContent.removeClass('searchBarSpacer');
+
+    }else{
+
+        //call this function on scroll and also on window resize
+        $(window).scroll(move);
+        $(window).on('resize', function(){
+            move();
+        });
+
+        move();
+
+    }
+}
+
+
+/***********
+* Home Map *
+***********/
+//Show all the map locations
+function showAllMapLocations(){
+    //loop through each of the map locations and remove the 'officeSel' class
+    $('.officeLocation').each(function(){
+        if($(this).hasClass('officeSel')){
+            $(this).removeClass('officeSel');
+        }
+        $(this).fadeIn();
+    });
+}
+//Hide all the map locations except the one that has the class 'officeSel'
+function hideMapLocations(){
+    //Hide all office locations that aren't the one that was selected
+    $('.officeLocation').each(function(){
+        if(!$(this).hasClass('officeSel')){
+            $(this).fadeOut();
+        }
+    });
+}
+//Hide the popOver
+function hideMapPopOver(){
+    var popOver = $('.mapPopOver');
+    $(popOver).fadeOut();
+
+    showAllMapLocations();
+}
+//Show the popOver
+function showMapPopOver(country_id){
+    //make sure all the navigation menus are closed
+    $('.popOverOfficeNavs').removeClass('mapCountryNavSel');
+    //Add a class to the nav menu is selected
+    $('.popOverOffices-'+country_id).addClass('mapCountryNavSel');
+    //Select the first office of the selected country
+    select_first_office();
+    //show the popOver
+    $('#mapPopOver').fadeIn(300);
+}
+//select the first item in the list for country with the class 'mapCountryNavSel'
+function select_first_office(){
+    $('ul.mapCountryNavSel li:first-child').click();
+
+    //make sure we hide / show the drop down icon if there's
+    var countNumberInList = $('ul.mapCountryNavSel li').size();
+
+    if(countNumberInList > 1){
+        $('#mapPopOverNav').removeClass('disableDD');
+        //$('i.icon-drop-down').removeClass('hidden');
+    }else{
+        $('#mapPopOverNav').addClass('disableDD');
+        //$('i.icon-drop-down').addClass('hidden');
+    }
+
+}
+//When an office is selected in the popOver nav, change the details to reflect the change
+function updateOfficeDetails(e){
+    var office = $(e.target).attr('data-office');
+    var office_country = $(e.target).attr('data-country');
+    var office_phone = $(e.target).attr('data-phone');
+    var office_email = $(e.target).attr('data-email');
+    var office_more_link = $(e.target).attr('data-more-url');
+    //Update the office name
+    $('#mapPopOverOffice').html('<i class="flag-'+office_country+'-m"></i> '+office);
+    //Update the contact details
+    $('#mapPopOverTel').html('<i class="icon-tel-sm"></i> '+office_phone);
+    $('#mapPopOverEmail').html('<i class="icon-email"></i> <a href="mailto:'+office_email+'">'+office_email+'</a>');
+    //Update which office is selected
+    $('#mapPopOverNavSel').html(office);
+
+    //Update the More Details link
+    if(office_more_link == ''){
+        $('#mapPopOverMore').hide();
+    }else{
+        $('#mapPopOverMore').attr("href", office_more_link);
+        $('#mapPopOverMore').show();
+    }
+}
+//Once the office list is loaded, hide the loading animation and show the office details
+function show_loaded_info(){
+    $('#mapPopOverLoading').hide();
+    $('#mapPopOverFooter').removeClass('mapPopOverHide');
+}
+//Load all the office locations
+function get_office_list(){
+    $.post('/ajax/country_offices/', function(data){
+
+        if(data.success){
+            //loop through the data and setup the popOver nav menus
+            var nav = '', i = 1;
+            $.each(data.office, function(k, v){
+                $.each(v, function(c, o){
+
+                   if(i == 1){
+                       nav += '<ul class="popOverOfficeNavs popOverOffices-'+o.country_id+'">';
+                   }
+                   //define the url
+                   var url = '';
+                   if(o.region_id == '0'){
+                       if(o.country_id != 0){
+                           url = '/property-for-sale/'+o.country_url+'/';
+                       }
+                   }else{
+                       url = '/property-for-sale/'+o.region_url+'/';
+                   }
+                   nav += '<li data-country="'+(o.flag != null ? o.flag : "uk")+'" data-office="'+o.office+'" data-phone="'+o.office_tel+'" data-email="'+o.office_email+'" data-more-url="'+url+'">'+o.office+'</li>';
+                   i++;
+                });
+                nav += '</ul>';
+                i = 1;
+            });
+
+            //add this list of offices to the pop over nav
+            $('#popOverOfficeList').html(nav);
+
+            //check if the popOver is currently open
+            if($('#mapPopOver').is(':visible')){
+
+                //get the country id from the id assigned to this element
+                var country_id = $('.officeSel .officeLocator').attr('id').replace('offices-', '');
+
+                //Add a class to the nav menu is selected
+                $('.popOverOffices-'+country_id).addClass('mapCountryNavSel');
+
+                //load either the country that has been clicked on or the first one if nothing has been selected
+                select_first_office();
+            }
+
+            //show loaded info
+            show_loaded_info();
+        }else{
+            console.log('there was a problem');
+        }
+    }, 'json');
+}
+
+
+
+
+
+
+
+
+/* Featured Properties */
+var fProperties = 9;
+var fPropAnim = false;
+var dispFeatured = 9;
+var moreFeaturedBtn = '#featuredPropertiesMore';
+var moreFeaturedLoading = '#featuredPropertiesLoading';
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+    return array;
+}
+
+function show_featured_properties_loading(){
+    $(moreFeaturedBtn).hide();
+    $(moreFeaturedLoading).show();
+    fPropAnim = true;
+}
+function hide_featured_properties_loading(){
+    $(moreFeaturedBtn).show();
+    $(moreFeaturedLoading).hide();
+    fPropAnim = false;
+}
+function disable_featured_properties_more(){
+    $(moreFeaturedBtn).hide();
+    $(moreFeaturedLoading).hide();
+}
+function animate_featured_properties(inOrOut, display){
+
+    //Create an array of numbers dependant on the number of featured properties we're displaying
+    var featuredImagesArr = [];
+    for (var i = 1; i <= display; i++){
+        featuredImagesArr.push(i);
+    }
+    shuffle(featuredImagesArr);
+
+    for (var i = 0; i < featuredImagesArr.length; i++) {
+        (function(i) {
+            setTimeout(function(){
+
+                if(inOrOut == 'out'){
+                    $('.fpFeatured-'+featuredImagesArr[i]).fadeOut(600);
+                }else{
+                    $('.fpFeatured-'+featuredImagesArr[i]).fadeIn(600);
+                }
+            }, i * 150);
+        })(i);
+    }
+}
+
+/*************
+* Search Bar *
+*************/
+var searchCountry = '#sBCountry';
+var searchRegion = '#sBRegion';
+var searchLocation = '#sBLocation';
+var searchTypes = '#sBType';
+
+
+function update_search_bar_region(country_id){
+
+    $.post('/ajax/search_update_region/', { country_id:country_id }, function(data){
+
+        var html = '';
+        var len = data.length;
+        for (var i=0; i<len; i++){
+            html += '<option value="' + data[i].region_id + '">' + data[i].region + '</option>';
+        }
+
+        $(searchRegion).html(html);
+
+        //select the first value in the list
+        $(searchRegion).val("0").trigger("change");
+
+        if(len == 1){
+            $(searchRegion).select2("disable", true);
+        }else{
+            $(searchRegion).select2("enable", true);
+        }
+
+
+
+    }, 'json');
+}
+
+function update_search_bar_location(region_id){
+
+    $.post('/ajax/search_update_location/', { region_id:region_id }, function(data){
+
+        var html = '';
+        var len = data.length;
+        for (var i=0; i<len; i++){
+            html += '<option value="' + data[i].location_id + '">' + data[i].location + '</option>';
+        }
+
+        $(searchLocation).html(html);
+
+        //select the first value in the list
+        $(searchLocation).val("0").trigger("change");
+
+        if(len == 1){
+            $(searchLocation).select2("disable", true);
+        }else{
+            $(searchLocation).select2("enable", true);
+        }
+
+        if(region_id == 2){
+            update_property_types(true);
+        }else{
+            update_property_types(false);
+        }
+
+
+    }, 'json');
+}
+
+
+function update_search_bar_location_type(loc_id, reg_id){
+
+//alert(loc_id);
+
+        if(loc_id == 237){
+            update_property_types('annecy');
+        }
+		else if(reg_id == 2)
+		{
+			update_property_types(true);
+		}
+		else{
+            update_property_types(false);
+        }
+
+
+    
+}
+
+function update_property_types(show_chalet){
+
+    var html = '';
+    html += '<option value="">All Property Type</option>';
+
+    if(show_chalet == true){
+        html += '<option value="2">Apartment</option>';
+        html += '<option value="3">Hotel</option>';
+        html += '<option value="4">Chalet</option>';
+        html += '<option value="5">Plots</option>';
+
+    }
+	else if(show_chalet == 'annecy'){
+        html += '<option value="1">Villa</option>';
+        html += '<option value="2">Apartment</option>';
+        html += '<option value="3">Hotel</option>';
+		html += '<option value="4">Chalet</option>';
+        html += '<option value="5">Plots</option>';
+    }
+	else{
+        html += '<option value="1">Villa</option>';
+        html += '<option value="2">Apartment</option>';
+        html += '<option value="3">Hotel</option>';
+        html += '<option value="5">Plots</option>';
+    }
+
+    $(searchTypes).html(html);
+    //select the first value in the list
+    $(searchTypes).val("0").trigger("change");
+	
+	$(searchTypesMob).html(html);
+    //select the first value in the list
+    $(searchTypesMob).val("0").trigger("change");
+	
+}
+
+/*function update_property_types(show_chalet){
+
+    var html = '';
+    html += '<option value=""></option>';
+
+    if(show_chalet){
+        html += '<option value="2">Apartment</option>';
+        html += '<option value="3">Hotel</option>';
+        html += '<option value="4">Chalet</option>';
+        html += '<option value="5">Plots</option>';
+
+    }else{
+        html += '<option value="1">Villa</option>';
+        html += '<option value="2">Apartment</option>';
+        html += '<option value="3">Hotel</option>';
+        html += '<option value="5">Plots</option>';
+    }
+
+    $(searchTypes).html(html);
+    //select the first value in the list
+    $(searchTypes).val("0").trigger("change");
+}*/
+
+/*************************
+* Search Bar For Mobile  *
+**************************/
+var searchCountryMob = '#sBCountry-mob';
+var searchRegionMob = '#sBRegion-mob';
+var searchLocationMob = '#sBLocation-mob';
+var searchTypesMob = '#sBType-mob';
+
+
+function update_search_bar_region_mob(country_id){
+
+    $.post('/ajax/search_update_region/', { country_id:country_id }, function(data){
+
+        var html = '';
+        var html = '<option value="">All Regions</option>';
+        var len = data.length;
+        for (var i=1; i<len; i++){
+		
+            html += '<option value="' + data[i].region_id + '">' + data[i].region + '</option>';
+        }
+
+        $(searchRegionMob).html(html);
+
+        //select the first value in the list
+        $(searchRegionMob).val("0").trigger("change");
+
+        /*if(len == 1){
+            $(searchRegionMob).select2("disable", true);
+        }else{
+            $(searchRegionMob).select2("enable", true);
+        }*/
+        
+        if(len == 1){ // THAT COUNTRY DOES NOT HAVE REGIONS
+            $('#sBRegion-mob').prop('disabled', true);
+        }else{
+            $('#sBRegion-mob').prop('disabled', false);
+        }
+
+
+
+    }, 'json');
+}
+
+function update_search_bar_location_mob(region_id){
+
+    $.post('/ajax/search_update_location/', { region_id:region_id }, function(data){
+
+        var html = '';
+        var html = '<option value="">All Locations</option>';
+        var len = data.length;
+        for (var i=1; i<len; i++){
+            html += '<option value="' + data[i].location_id + '">' + data[i].location + '</option>';
+        }
+
+        $(searchLocationMob).html(html);
+
+        //select the first value in the list
+        $(searchLocationMob).val("0").trigger("change");
+
+        /*if(len == 1){
+            $(searchLocationMob).select2("disable", true);
+        }else{
+            $(searchLocationMob).select2("enable", true);
+        }*/
+        if(len == 1){
+            $('#sBLocation-mob').prop('disabled', true);
+        }else{
+            $('#sBLocation-mob').prop('disabled', false);
+        }
+                        
+            if(region_id == 2){
+            update_property_types_mob(true);
+        }else{
+            update_property_types_mob(false);
+        }
+
+
+    }, 'json');
+}
+
+function update_property_types_mob(show_chalet){
+
+    var html = '';
+    html += '<option value="">All Property Types</option>';
+
+    if(show_chalet){
+        html += '<option value="2">Apartment</option>';
+        html += '<option value="3">Hotel</option>';
+        html += '<option value="4">Chalet</option>';
+    }else{
+        html += '<option value="1">Villa</option>';
+        html += '<option value="2">Apartment</option>';
+        html += '<option value="3">Hotel</option>';
+    }
+
+    $('#sBType-mob').html(html);
+    //select the first value in the list
+    $('#sBType-mob').val("0").trigger("change");
+}
+
+
+
+
+/*******************
+* Header Slideshow *
+*******************/
+function headerSS(images){
+
+    var container = $('.headerImageSS'),
+    nextImage = 0,
+    curHolder = 1,
+    pauseTime = 5000,
+    imgReady = false,
+    firstInstance = true;
+
+    var imageH1 = $('#headerImage1');
+    var imageH2 = $('#headerImage2');
+
+    prepareFadeIn();
+
+    function prepareFadeIn(){
+
+        var image = images[nextImage];
+        imgReady = false;
+
+        $.preload([ image ], {
+            loaded: function(img, loaded, total) {
+
+                //set the now preloaded image in the current image holder
+                if(curHolder == 1){
+                    imageH1.css({
+                        "background-image" : "url(" + image + ")"
+                    });
+                }else{
+                    imageH2.css({
+                        "background-image" : "url(" + image + ")",
+                        "display" : "block"
+                    });
+                }
+
+                imgReady = true;
+
+                if(firstInstance){
+                    fadeInSSImage();
+                }
+
+            }
+        });
+
+        nextImage++;
+        if(nextImage>=images.length){ nextImage = 0; }
+    }
+
+    function fadeInSSImage(){
+
+        if(imgReady){
+
+            if(firstInstance){
+                firstInstance = false;
+                var ssTimer = setInterval(fadeInSSImage, pauseTime);
+            }
+
+            if(curHolder == 1){
+                curHolder = 2;
+                imageH1.fadeIn(600, function(){
+                    prepareFadeIn();
+                });
+            }else{
+                curHolder = 1;
+                imageH1.fadeOut(600, function(){
+                    prepareFadeIn();
+                });
+            }
+
+        }
+    }
+}
+
+/********************
+* Load Header Image *
+********************/
+function loadInHeaderImage(headerId){
+    var header = $(headerId),
+    headerImage = header.attr('data-image');
+    //append the background image container
+    header.append('<div class="headerImageBg" id="headerImageBg" ></div>');
+
+    //Load in the header image
+    $.preload([ headerImage ], {
+        loaded: function(img, loaded, total) {
+            $('#headerImageBg').css({
+                "background-image" : "url(" + headerImage + ")"
+            });
+            $('#headerImageBg').fadeIn();
+        }
+    });
+}
+
+/****************
+* Meet the Team *
+**************** /
+var mTTOpen = false, mTTAnim = false, profilePos = '800';
+
+function showHideProfile(profileId){
+
+    //define the content of the element that was clicked
+    var profileContent = '#'+profileId+'-profile';
+
+    if(!mTTOpen){
+        showMTTProfile(profileContent, profileId);
+        openMTTProfile();
+    }else{
+
+        if($(profileContent).hasClass('mTTProfileSel')){
+            //hide the profile
+            closeMTTProfile();
+        }else{
+            //switch the content
+            switchProfile(profileContent, profileId);
+        }
+    }
+}
+
+function showMTTProfile(profileContent, profileId){
+
+    //hide the current thing
+    $('.meetTheTeamProfile').hide();
+
+    //clear the currently selected profile
+    $('.meetTheTeamProfile').removeClass('mTTProfileSel');
+
+    //show the content
+    $(profileContent).show().addClass('mTTProfileSel');
+    showSelectedMTT(profileId);
+}
+
+function openMTTProfile(){
+    mTTAnim = true;
+    $('#mTTProfileH').slideDown(300, function(){
+       mTTOpen = true;
+       mTTAnim = false;
+       slideToProfile();
+    });
+}
+function closeMTTProfile(){
+    mTTAnim = true;
+    $('#mTTProfileH').slideUp(300, function(){
+       mTTOpen = false;
+       mTTAnim = false;
+    });
+}
+function switchProfile(profileContent, profileId){
+    mTTAnim = true;
+    //fadeOut the current content
+    $('.mTTProfileSel').fadeOut(300, function(){
+        $('.meetTheTeamProfile').removeClass('mTTProfileSel');
+
+        showSelectedMTT(profileId);
+
+        slideToProfile();
+
+        $(profileContent).fadeIn(300, function(){
+            $(profileContent).addClass('mTTProfileSel');
+            mTTAnim = false;
+        });
+    });
+}
+function showSelectedMTT(profileId){
+
+    if(profileId == 'mTT-1'){
+        $('#mTTSelect').css('background-position','139px 0px');
+    }else if(profileId == 'mTT-2'){
+        $('#mTTSelect').css('background-position','381px 0px');
+    }else if(profileId == 'mTT-3'){
+        $('#mTTSelect').css('background-position','623px 0px');
+    }else if(profileId == 'mTT-4'){
+        $('#mTTSelect').css('background-position','865px 0px');
+    }
+
+}
+function slideToProfile(){
+
+    if(window.pageYOffset < profilePos){
+        $("html, body").animate({
+            "scrollTop": profilePos
+        }, 400);
+    }
+} */
+
+
+/************
+* Subscribe *
+************/
+function launchSubscribePopup(location){
+
+    var popupUrl = '/ajax/subscribe-popup/';
+
+    if(location != ''){
+        popupUrl = popupUrl+location+'/'
+    }
+
+    $.fancybox({ type: 'ajax', 'href': popupUrl, padding: '0', closeClick : false, // prevents closing when clicking INSIDE fancybox
+        helpers     : {
+            overlay : { closeClick: false } // prevents closing when clicking OUTSIDE fancybox
+        }
+    });
+}
+
+
+
+$(document).ready(function(){
+
+
+	/*******************
+	* Read More (kirk) *
+	*******************/
+
+	$('.readMoreContent').hide();
+
+	$(".readMoreLink").click(function(e){
+
+		e.preventDefault();
+
+		if($(this).hasClass('open') ) {
+
+			$('.readMoreContent').hide();
+			$(this).removeClass('open');
+			$(this).text('+ More');
+
+		}else{
+
+			$('.readMoreContent').show();
+			$(this).addClass('open');
+			$(this).text('- Less');
+
+		}
+
+	});
+
+	/***********************
+	* Read More - Multiple *
+	***********************/
+	$('.moreContent').hide();
+	$('.moreLink').click(function(e){
+		//Get the ID
+		var id = $(this).attr('id');
+
+		if($(this).hasClass('open')){
+
+			$('#'+id+'Content').hide();
+			$(this).removeClass('open');
+			$(this).html('Read more<i class="icon-readmore-open"></i>');
+
+		}else{
+
+			$('#'+id+'Content').show();
+			$(this).addClass('open');
+			$(this).html('Less<i class="icon-readmore-close"></i>');
+
+		}
+
+		e.preventDefault();
+	});
+
+	/******************
+	* Property Finder *
+	******************/
+	if($('.pf-how-it-works').length){
+
+		function hideToggleOptions(){
+			$('.hiw-toggle').removeClass('selected');
+			$('.hiw-content').removeClass('selected');
+		}
+
+		$('.hiw-toggle').hover(function(e){
+			var id = $(this).attr('id');
+
+			hideToggleOptions();
+
+			$(this).addClass('selected');
+			$('#'+id+'Content').addClass('selected');
+
+			e.preventDefault();
+		});
+
+
+
+	}
+
+
+	/*********************
+	* Services Accordian *
+	*********************/
+	if($('.servicesAccordian').length){
+
+		$('.serviceToggle').click(function(e){
+			//Get the ID of this element
+			var id = $(this).attr('id');
+			var toggleIcon = $('#'+id+' .icon-toggle');
+			var content = id+'Content';
+
+			if(toggleIcon.hasClass('icon-open')){
+				//open the content
+				toggleIcon.removeClass('icon-open').addClass('icon-close');
+				$('#'+content).slideDown(600);
+
+			}else{
+				//close the content
+				toggleIcon.removeClass('icon-close').addClass('icon-open');
+				$('#'+content).slideUp(600);
+			};
+
+			e.preventDefault();
+		});
+
+	}
+
+    /*******
+    * Blog *
+    *******/
+    if($('.gallery').length){
+        $('.gallery').each(function(){
+            //get the id of each gallery
+            var id = $(this).attr('id');
+            $('a', '#'+id).attr('rel', id).fancybox({helpers : { title : null },'type' : 'image', 'cyclic':true, 'padding': '0', keys: { next : { 13 : 'left', 39 : 'left' }, prev : { 8  : 'right', 37 : 'right', }, close : [27] } });
+        });
+    }
+
+    /**********
+    * Jump To *
+    **********/
+    if($('.jumpTo').length){
+        var new_position = $('.jumpTo').offset();
+        window.scrollTo(new_position.left,new_position.top-297);
+    };
+
+    /***********
+    * Tooltips *
+    ***********/
+    $('.tt').powerTip({ 'followMouse': true, 'fadeOutTime': 0, 'fadeInTime': 100, 'closeDelay':0, 'intentSensitivity':100, 'intentPollInterval':0, 'offset':8 });
+    $('.tt_trigger').powerTip({'fadeOutTime': 0, 'fadeInTime': 100, 'closeDelay':0, 'intentSensitivity':100, 'intentPollInterval':0, 'manual':true, 'offset':8 });
+
+    /********************
+    * Custom Checkboxes *
+    ********************/
+    if($('.checkBox').length){
+        $('.checkBox').click(function(e){
+
+            var id = $(this).attr('id');
+            $('#'+id+'Checkbox').trigger('click');
+
+            if(!$('#'+id).hasClass('checked')){
+                $('#'+id).addClass('checked');
+            }else{
+                $('#'+id).removeClass('checked');
+            }
+
+            e.preventDefault();
+        });
+    }
+
+
+    /*******************
+    * Property Profile *
+    *******************/
+    $('.pSS').popupwindow();
+
+    /*********
+    * Search *
+    *********/
+    function goPage(newURL){// if url is empty, skip the menu dividers and reset the menu selection to default
+    if (newURL !== "") {// if url is "-", it is this page -- reset the menu:
+        if (newURL == "-" )
+            resetMenu();
+        else
+            document.location.href = newURL;
+    }
+}
+    $('select.link').on('change', function(){
+    goPage(this.options[this.selectedIndex].value);
+});
+    $('select.searchSortSel').on('change', function(){
+        var order = this.options[this.selectedIndex].value;
+	//console.log($('option:selected',this).index());         
+        //alert('check one '+$("select.searchSortSel option:selected").val()+'check two '+order);
+        goPage("/luxury-properties-for-sale/update-sort-by/"+this.options[this.selectedIndex].value+"/");
+    });
+
+    $('select.searchPerPageSel').on('change', function(){
+        var order = this.options[this.selectedIndex].value;
+        //alert('check new one '+order);
+        goPage("/luxury-properties-for-sale/update-per-page/"+this.options[this.selectedIndex].value+"/");
+    });
+
+$('.searchPerPageSelLocation').change(function(){
+var order = $(this).val();
+var pathname = window.location.pathname;
+    window.location.replace(pathname+"?page="+order+"/");
+    });
+
+$('.searchSortSelLocation').change(function(){
+var pathname = window.location.pathname;
+//alert(pathname);
+var order = $(this).val();
+    window.location.replace(pathname+"?order="+order+"/");
+    });
+
+/*$('.searchPerPageSelLocation').change(function(){
+var order = $(this).val();
+var urlpath = '/ajax/update_per_page_location/'+order;
+ $.ajax({
+    url:urlpath,
+    type: "post",
+    data:{"value":order},
+ });
+$.ajax({
+        url: window.location.href,
+        headers: {
+            "Pragma": "no-cache",
+            "Expires": -1,
+            "Cache-Control": "no-cache"
+        }
+    }).done(function () {
+        window.location.reload(true);
+    });
+});
+
+
+$('.searchSortSelLocation').change(function(){
+var order = $(this).val();
+var urlpath = '/ajax/update_sort_by_location/'+order;
+ $.ajax({
+    url:urlpath,
+    type: "post",
+    data:{"value":order}, 
+ });
+$.ajax({
+        url: window.location.href,
+        headers: {
+            "Pragma": "no-cache",
+            "Expires": -1,
+            "Cache-Control": "no-cache"
+        }
+    }).done(function () {
+        window.location.reload(true);
+    });
+});*/
+
+function update_location_per_page(country_id){
+
+    $.post('/ajax/update_per_page_location/', { country_id:country_id }, function(data){
+
+        var html = '';
+        var len = data.length;
+        for (var i=0; i<len; i++){
+            html += '<option value="' + data[i].region_id + '">' + data[i].region + '</option>';
+        }
+
+        $(searchRegion).html(html);
+
+        //select the first value in the list
+        $(searchRegion).val("0").trigger("change");
+
+        if(len == 1){
+            $(searchRegion).select2("disable", true);
+        }else{
+            $(searchRegion).select2("enable", true);
+        }
+
+
+
+    }, 'json');
+}
+
+
+
+    /****************
+    * Meet the Team *
+    ****************/
+    if($('.meetTheTeamRow').length){
+        if($('.mTTtrigger').length){
+
+            var profileId = $('.mTTtrigger').attr('id');
+            if(!mTTAnim){
+                showHideProfile(profileId);
+            }
+        }
+    }
+
+    $('.mTTsel').click(function(e){
+
+        //get the Id of the clicked element
+        var profileId = $(this).attr('id');
+        if(!mTTAnim){
+            showHideProfile(profileId);
+        }
+
+        e.preventDefault();
+    });
+
+    $('.mTTClose').click(function(e){
+        closeMTTProfile();
+        e.preventDefault();
+    });
+
+    /*****************
+    * Private Finace *
+    *****************/
+    if($('#privateFinanceQuote').length){
+
+        $('#privateFinanceQuote').waypoint(function(direction) {
+            if (direction == 'down')
+                $('#privateFinanceImg').addClass('animate-finance-quote-image-in');
+                $('#privateFinanceQuoteText').addClass('animate-finance-quote-in');
+        }, { offset: '60%' });
+
+    };
+
+
+    /******************
+    * Region Selector *
+    ******************/
+    if($('#regionSelect').length){
+
+        //Define what happens when a user hovers over a region
+        $('#regionSelect ul li a').mouseenter(function(e){
+           show_region_preview(this);
+        });
+
+        function show_region_preview(region){
+
+            $('#regionSelect ul li a').removeClass("regionSelected");
+            $(region).addClass("regionSelected");
+
+            //get the data attributes for this region
+            var regionImage = $(region).attr('data-image');
+            var regionTitle = $(region).attr('data-title');
+            var regionLink = $(region).attr("href");
+
+            //hide the current region select image
+
+
+            //Preload the image and show it
+            $.preload([ regionImage ], {
+                loaded: function(img, loaded, total) {
+                    $('#regionSelectImage').hide();
+                    $('#regionSelectImage').html('<img src="'+regionImage+'" alt="'+regionTitle+'" />');
+                    $('#regionSelectImage').show();
+                }
+            });
+
+            //update the region info
+            $('#regionSelectCaption').html(regionTitle);
+            $('#regionSelectLink').attr("href", regionLink);
+
+        }
+
+        //Trigger showing the first region
+        $('#regionSelect ul li a:first').trigger("mouseenter");
+    }
+
+    /****************
+    * Location Page *
+    ****************/
+    if($('#locationHeader').length){
+        loadInHeaderImage('#locationHeader');
+    }
+	/****************
+    * Country Page *
+    ****************/
+    if($('#countryHeader').length){
+        loadInHeaderImage('#countryHeader');
+    }
+	/**************
+    * Region Page *
+    **************/
+    if($('#regionHeader').length){
+        loadInHeaderImage('#regionHeader');
+    }
+
+    /*****************************
+    * Services > Private Finance *
+    *****************************/
+    if($('#privateFinanceHeader').length){
+        loadInHeaderImage('#privateFinanceHeader');
+    }
+
+    /**********************
+    * Property Sales Page *
+    **********************/
+    if($('#propertySalesHeader').length){
+        loadInHeaderImage('#propertySalesHeader');
+    }
+
+    /***************
+    * Testimonials *
+    ***************/
+    if($('#testimonialsHeader').length){
+        loadInHeaderImage('#testimonialsHeader');
+
+        $('#testimonials').waypoint(function(direction) {
+            if (direction == 'down')
+                $('.testimonial').addClass('animate-testimonial-in');
+        }, { offset: '50%' });
+    }
+
+    /**********
+    * Contact *
+    **********/
+    if($('#contactHeader').length){
+        loadInHeaderImage('#contactHeader');
+    }
+
+    /**********************
+    * About - The Company *
+    **********************/
+    /* Header Slideshow */
+
+
+
+    if($('#aboutCompanySS').length){
+ var all_img = document.getElementById("wrapperImageSS").getAttribute("dataImage");
+ var imgarr = all_img.split(",");
+       var headerImages = imgarr; //new Array('/public/images/media/header-image-5.jpg','/public/images/media/header-image-1.jpg');
+
+        shuffle(headerImages);
+        headerSS(headerImages);
+    }
+
+    /* Animations */
+    $('#aboutCompanyHeader').waypoint(function(direction) {
+        if (direction == 'down')
+            $('.aboutCompanyLogo').addClass('aboutCompanyLogo-animate');
+    }, { offset: '50%' });
+
+    $('#aboutCompanyQuote').waypoint(function(direction) {
+        if (direction == 'down')
+            $('.aboutQuote').addClass('aboutCompanyQuote-animate');
+            $('.aboutQuoteBy').addClass('aboutCompanyQuoteBy-animate');
+    }, { offset: '50%' });
+
+    
+
+    $('#aboutCompanyF1').waypoint(function(direction) {
+        if (direction == 'down')
+            $('.aboutCompanyF2a').addClass('aboutCompanyF2a-animate');
+            $('.aboutCompanyF2b').addClass('aboutCompanyF2b-animate');
+    }, { offset: '70%' });
+    
+    $('#aboutCompanyF2').waypoint(function(direction) {
+        if (direction == 'down')
+
+            $('.aboutCompanyFactFlags .flag-france-xl').addClass('aboutCompanyFlagTop-animate');
+            $('.aboutCompanyFactFlags .flag-italy-xl').addClass('aboutCompanyFlagTop-animate');
+            $('.aboutCompanyFactFlags .flag-spain-xl').addClass('aboutCompanyFlagTop-animate');
+            $('.aboutCompanyFactFlags .flag-portugal-xl').addClass('aboutCompanyFlagTop-animate');
+
+            $('.aboutCompanyFactFlags .flag-barbados-xl').addClass('aboutCompanyFlagBottom-animate');
+            $('.aboutCompanyFactFlags .flag-balearic-xl').addClass('aboutCompanyFlagBottom-animate');
+            $('.aboutCompanyFactFlags .flag-cyprus-xl').addClass('aboutCompanyFlagBottom-animate');
+            $('.aboutCompanyFactFlags .flag-world-xl').addClass('aboutCompanyFlagBottom-animate');
+
+    }, { offset: '60%' });
+
+    $('#aboutCompanyF3').waypoint(function(direction) {
+        if (direction == 'down')
+            $('.aboutCompanyF3a').addClass('aboutCompanyF3a-animate');
+            $('.aboutCompanyF3b').addClass('aboutCompanyF3b-animate');
+    }, { offset: '70%' });
+
+    $('#aboutCompanyF4').waypoint(function(direction) {
+        if (direction == 'down')
+            $('.aboutCompanyF4a').addClass('aboutCompanyF4a-animate');
+            $('.aboutCompanyF4b').addClass('aboutCompanyF4b-animate');
+    }, { offset: '70%' });
+
+
+    /**********************
+    * Featured Properties *
+    **********************/
+    $('#featuredPropertiesMore').click(function(e){
+        e.preventDefault();
+
+        if(!fPropAnim){
+
+            show_featured_properties_loading();
+
+            //get the details of what we're loading
+            var type = $(this).attr('data-type');
+            var id = $(this).attr('data-type-id');
+
+            animate_featured_properties('out', 9);
+
+            $.post('/ajax/load_more_featured_properties/'+fProperties+'/'+type+'/'+(id != '' ? id+'/' : '' ), function(data){
+
+                var wait1 = {};
+                wait1 = $.timer(2000,function(){
+
+                    $('#featuredProperties').hide();
+                    $('#featuredProperties').html(data.featured);
+
+                    //hide the newly inserted properties
+                    $('.fProperty').hide();
+
+                    $('#featuredProperties').show();
+
+                    animate_featured_properties('in', 9);
+
+                    fProperties = fProperties + 9;
+
+                    var wait2 = {};
+                    wait2 = $.timer(1950,function(){
+
+                        if(data.remaining > dispFeatured){
+                            hide_featured_properties_loading();
+                        }else{
+                            disable_featured_properties_more();
+                        }
+
+                    });
+                });
+            }, 'json');
+        }
+    });
+
+
+    if($('#mapPopOver').length){
+        get_office_list();
+    };
+
+    //setup the nicely styled select boxes
+    $('select.s2').each(function(){
+        var selectMenu = $(this);
+        selectMenu.select2({ minimumResultsForSearch: '999', allowClear: true });
+    });
+
+    /*************
+    * Search Bar *
+    *************/
+    $(searchCountry).change(function(e){
+        //Get the selected country id
+        var country_id = $(searchCountry).val();
+        //update the regions
+        update_search_bar_region(country_id);
+    });
+    $(searchRegion).change(function(e){
+        //Get the selected country id
+        var country_id = $(searchRegion).val();
+        //update the regions
+        update_search_bar_location(country_id);
+    });
+	$(searchLocation).change(function(e){
+        //Get the selected country id
+        var loc_id = $(searchLocation).val();
+		var country_id = $(searchRegion).val();
+		//alert(loc_id);
+        //update the regions
+        update_search_bar_location_type(loc_id, country_id);
+    });
+
+$(searchCountryMob).change(function(e){
+        //Get the selected country id
+        var country_id = $(searchCountryMob).val();
+        //update the regions
+        update_search_bar_region_mob(country_id);
+    });
+    $(searchRegionMob).change(function(e){
+        //Get the selected country id
+        var country_id = $(searchRegionMob).val();
+        //update the regions
+        update_search_bar_location_mob(country_id);
+    });
+	$(searchLocationMob).change(function(e){
+        //Get the selected country id
+        var loc_id = $(searchLocationMob).val();
+		var country_id = $(searchRegionMob).val();
+		//alert(loc_id);
+        //update the regions
+        update_search_bar_location_type(loc_id, country_id);
+    });
+
+
+
+    /***********
+    * Home Map *
+    ***********/
+    //Sort the hover functions of the map locations
+    $('.officeLocator').hover(function(e){
+        var officeLoc = $(e.target).closest('.officeLocation');
+
+        officeLoc.addClass('mapHover');
+        officeLoc.powerTip('show');
+
+    },function(e){
+        var officeLoc = $(e.target).closest('.officeLocation');
+
+        officeLoc.removeClass('mapHover');
+        officeLoc.powerTip('hide');
+    });
+    //Click function on the close popOver menu
+    $('.mapPopOverTop .close-btn').click(function(e){
+        e.preventDefault();
+        hideMapPopOver();
+    });
+    //When a location is clicked
+    $('.officeLocator').click(function(e){
+        //define what office location we're dealing with
+        var officeLocationContainer = $(e.target).closest('.officeLocation');
+        $(officeLocationContainer).addClass('officeSel');
+        //get the country id from the id assigned to this element
+        var country_id = e.target.id.replace('offices-', '');
+
+        //hide the current tooltip
+        officeLocationContainer.powerTip('hide');
+
+        //Hide all map locations exept the current one that is selected
+        hideMapLocations();
+        //move the popOver to the new location marker
+        $('.mapPopOver').prependTo(officeLocationContainer);
+        //show the popOver
+        showMapPopOver(country_id);
+    });
+
+    /****************
+    * mapPopOverNav *
+    ****************/
+    //Hover
+    $('.mapPopOverNav').mouseenter(function(e){
+
+        var countNumberInList = $(this).children('#popOverOfficeList').children('.mapCountryNavSel').children('li').size();
+
+        //if there is only 1 element in the drop down list, don't show the drop down menu
+        if(countNumberInList > 1){
+            $(this).children('#popOverOfficeList').addClass('showNav');
+        }
+    });
+    $('.mapPopOverNav').mouseleave(function(e){
+        $(this).children('#popOverOfficeList').removeClass('showNav');
+    });
+    //Click
+    //the office location popOver navigation
+    $('#popOverOfficeList').on("click", "ul li", function(e){
+        //update the details of the selected menu
+        updateOfficeDetails(e);
+        $('.mapPopOverNav .mapPopOverOfficeList').removeClass('showNav');
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    var locationsNav = $('#locationsNavH'),
+    locationsMegaNav = $('#locationsMegaNav'),
+    servicesNav = $('#servicesNavH'),
+    servicesMegaNav = $('#servicesMegaNav');
+
+
+    //hide the Locations Mega Nav
+    var hideLocationMegaNav = function(){
+        locationsMegaNav.hide();
+        locationsNav.removeClass('expanded');
+        clearTier2();
+    }
+    //show the Locations Mega Nav
+    var showLocationMegaNav = function(){
+        locationsNav.addClass('expanded');
+        locationsMegaNav.show();
+    }
+    //hide the Services Mega Nav
+    var hideServicesMegaNav = function(){
+        servicesMegaNav.hide();
+        servicesNav.removeClass('expanded');
+        clearTier2();
+    }
+    //show the Services Mega Nav
+    var showServicesMegaNav = function(){
+        servicesNav.addClass('expanded');
+        servicesMegaNav.show();
+    }
+
+    var clearTier1 = function(){
+        $('.navTier1 a').removeClass('subNavHover'); //remove any selected elements
+    }
+    var clearTier2 = function(){
+        $('.navTier2 a').removeClass('subNavHover'); //remove any selected elements
+    }
+
+
+
+
+
+
+
+    /*************
+    * Navigation *
+    *************/
+    $('.nav').mouseenter(function(){
+        $(this).children('.dd').addClass('hover'); //add the correct button styling
+        $(this).children('.ddSub').addClass('hovering'); //show the sub menu
+    });
+    $('.nav').mouseleave(function(){
+        $(this).children('.dd').removeClass('hover');
+        $(this).children('.ddSub').removeClass('hovering');
+
+        hideLocationMegaNav();
+        hideServicesMegaNav();
+        clearTier1();
+    });
+
+    /****************
+    * Locations Nav *
+    *****************/
+    var hideAllRegions = function(){ $('.region').hide(); }
+
+    //Show the region menu for this country
+    var showRegionsOfCountry = function(country){
+        var regionNav = '#'+country+'-nav';
+        $(regionNav).show();
+        showRegionInfo(regionNav+' a:first'); //select the first value in the regions list
+    }
+
+    //Show the region information
+    var showRegionInfo = function(navLink){
+
+        if(!$(navLink).hasClass('subNavHover')){
+
+            //remove the selected class from all sub Nav links
+            clearTier2();
+
+            //add the hover class to this link
+            $(navLink).addClass('subNavHover');
+
+            //get the data attributes for this region
+            var regionImage = $(navLink).attr('data-image');
+            var regionCountry = $(navLink).attr('data-country');
+            var regionDesc = $(navLink).attr('data-description');
+            var regionTitle = $(navLink).attr('data-title');
+            var regionLink = $(navLink).attr("href");
+
+            //Preload the image and show it
+            $.preload([ regionImage ], {
+                loaded: function(img, loaded, total) {
+                    $('#regionInfoImage').hide();
+                    $('#regionInfoImage').html('<img src="'+regionImage+'" alt="'+regionTitle+'" />');
+                    $('#regionInfoImage').show();
+                }
+            });
+
+            //update the megaNav Info
+            $('#regionInfoContent h5').html(regionTitle);
+            $('#regionInfoContent p').html(regionDesc);
+            $('#regionInfoContent a#regionInfoLink').attr("href", regionLink);
+            $('#regionInfoFlag').removeClass().addClass('flag-'+regionCountry+'-l');
+        }
+    }
+
+    //Define what happens when a user selects a country
+    $('ul.country a').mouseenter(function(e){
+        var country = e.target.id; //which country was hovered over
+        clearTier1(); //remove the selection of the tier 1 links
+        $(this).addClass('subNavHover'); //add the hover class to this link
+        showLocationMegaNav(); //show the locations Mega Nav
+        hideAllRegions(); //hide all the different country regions
+        showRegionsOfCountry(country); //show the regions in this country
+    });
+
+    //Define what happens when a user selects a region
+    $('ul.region a').mouseenter(function(e){
+        showRegionInfo(this); //show the info for this region
+    });
+
+    /***************
+    * Services Nav *
+    ***************/
+    //show the property types for this option
+    var showPropertyTypes = function(type){
+        var typeNav = '#'+type+'-nav';
+        $(typeNav).show();
+        showPropertyTypeInfo(typeNav+' a:first'); //select the first value in the property type list
+    }
+
+    //Show the property types information
+    var showPropertyTypeInfo = function(navLink){
+
+        if(!$(navLink).hasClass('subNavHover')){
+
+            //remove the selected class from all sub Nav links
+            clearTier2();
+
+            //add the hover class to this link
+            $(navLink).addClass('subNavHover');
+
+            //get the data attributes for this property type
+            var typeImage = $(navLink).attr('data-image');
+            var typeDesc = $(navLink).attr('data-description');
+            var typeTitle = $(navLink).attr('data-title');
+            var typeLink = $(navLink).attr("href");
+
+            //Preload the image and fade it in
+            $.preload([ typeImage ], {
+                loaded: function(img, loaded, total) {
+                    $('#servicesInfoImage').hide();
+                    $('#servicesInfoImage').html('<img src="'+typeImage+'" alt="'+typeTitle+'" />');
+                    $('#servicesInfoImage').show();
+                }
+            });
+
+            //update the megaNav Info
+            $('#servicesInfoContent h5').html(typeTitle);
+            $('#servicesInfoContent p').html(typeDesc);
+            $('#servicesInfoContent a#servicesInfoLink').attr("href", typeLink);
+
+        }
+    }
+
+    //Define what happens when a user selects a service
+    $('ul.services a').mouseenter(function(e){
+        if(!$(this).hasClass('pageLink')){
+            var service = e.target.id; //which service was hovered over
+            clearTier1(); //remove the selection of the tier 1 links
+            $(this).addClass('subNavHover'); //add the hover class to this link
+            showServicesMegaNav();
+            showPropertyTypes(service);
+        }else{
+            //collapse services megaNav
+            hideServicesMegaNav();
+            clearTier1(); //remove the selection of the tier 1 links
+            $(this).addClass('subNavHover'); //add the hover class to this link
+        }
+    });
+
+    //Define what happens when a user selects a region
+    $('ul.propertyTypes a').mouseenter(function(e){
+        showPropertyTypeInfo(this); //show the info for this property type
+    });
+
+    //Define what happens when a user hovers over the about menu
+    $('ul.about a').mouseenter(function(e){
+        $(this).addClass('subNavHover'); //add the hover class to this link
+    });
+    $('ul.about a').mouseleave(function(e){
+        $(this).removeClass('subNavHover'); //add the hover class to this link
+    });
+
+
+
+    //Feature Carousel
+    if($('#featureCarousel').length){
+        carousels();
+    };
+
+    //Sort Sticky Elements
+    if($('#searchBar').length){
+        stickyElements();
+    }
+
+    /************
+    * Subscribe *
+    ************/
+    if($('#subscribe').length){
+        $('#subscribe').click(function(e){
+
+            if(!$('#subscribe').hasClass('disableBtn')){
+
+                var subscribeLocation = '';
+
+                if($(this).attr('data-subscribe-location')){
+                    subscribeLocation = $(this).attr('data-subscribe-location');
+                }
+
+                launchSubscribePopup(subscribeLocation);
+            }
+
+            e.preventDefault();
+        });
+    }
+
+});
+
+
+/****************
+* IE Flip Cards *
+****************/
+$(document).on("mouseover", ".flipCardInnerIE", function(e) {
+    $('.back', this).fadeIn(300);
+    if($('.promoBanner', this).length){
+        $('.promoBanner', this).fadeOut(300);
+    }
+});
+
+$(document).on("mouseleave", ".flipCardInnerIE", function(e) {
+    $('.back', this).fadeOut(300);
+    if($('.promoBanner', this).length){
+        $('.promoBanner', this).fadeIn(300);
+    }
+});
+
+
+/********************************88 27-03-2017*************************************/
+ if($('#aboutCompanySSall').length){
+       loadInHeaderImage('#aboutCompanySSall');
+  }
+
+
+testExp = new RegExp('Android|webOS|iPhone|iPad|' +
+    		       'BlackBerry|Windows Phone|'  +
+    		       'Opera Mini|IEMobile|Mobile' , 
+    		      'i');
+if (testExp.test(navigator.userAgent)){
+	
+}
+$(".phonenumber").html('<a href="tel:'+$(".phonenumber").text()+'">'+$(".phonenumber").text()+'</a>');
