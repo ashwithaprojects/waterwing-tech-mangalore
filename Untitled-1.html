@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+<style>@import url(https://fonts.googleapis.com/css?family=Roboto+Slab:700);
+/*Related post at: https://superdevresources.com/zoom-effect-image-css/ */
+
+.zoom-effect-container {
+    float: left;
+    position: relative;
+    width: 350px;
+    height: 250px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.image-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+}
+
+.image-card img {
+  -webkit-transition: 0.4s ease;
+  transition: 0.4s ease;
+}
+
+.zoom-effect-container:hover .image-card img {
+  -webkit-transform: scale(1.08);
+  transform: scale(1.08);
+}
+</style>
+
+</head>
+
+<body>
+<div class="zoom-effect-container">
+  <div class="image-card">
+      <img src="https://superdevresources.com/wp-content/uploads/2014/12/lions.jpg"/>
+  </div>
+</body>
+</html>
